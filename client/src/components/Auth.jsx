@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_ENDPOINTS from "../config";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -26,12 +27,12 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+      const endpoint = isLogin ? API_ENDPOINTS.LOGIN : API_ENDPOINTS.REGISTER;
       const payload = isLogin
         ? { email: formData.email, password: formData.password }
         : formData;
 
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

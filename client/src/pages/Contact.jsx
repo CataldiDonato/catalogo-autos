@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_ENDPOINTS from "../config";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -47,7 +48,7 @@ export default function Contact() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
+      const response = await fetch(API_ENDPOINTS.CONTACT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

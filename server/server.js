@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -14,6 +15,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // Configurar conexión a PostgreSQL
 const pool = new Pool({
@@ -340,6 +342,11 @@ app.delete("/api/vehicles/:id", authMiddleware, async (req, res) => {
 // Ruta de prueba
 app.get("/api/health", (req, res) => {
   res.json({ status: "Server running", timestamp: new Date() });
+});
+
+// Servir el frontend para cualquier otra ruta (SPA)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 // Iniciar servidor con inicialización automática de BD

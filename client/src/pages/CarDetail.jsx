@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../config";
 
 export default function CarDetail() {
   const { id } = useParams();
@@ -13,7 +14,7 @@ export default function CarDetail() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:5000/api/vehicles/${id}`
+          API_ENDPOINTS.VEHICLE_DETAIL(id)
         );
         if (!response.ok) {
           throw new Error("Auto no encontrado");

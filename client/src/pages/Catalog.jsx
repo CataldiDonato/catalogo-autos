@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import VehicleCard from "../components/VehicleCard";
+import API_ENDPOINTS from "../config";
 
 export default function Catalog() {
   const [vehicles, setVehicles] = useState([]);
@@ -20,7 +21,7 @@ export default function Catalog() {
     const fetchVehicles = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/vehicles");
+        const response = await fetch(API_ENDPOINTS.VEHICLES);
         if (!response.ok) {
           throw new Error("Error al obtener los vehículos");
         }

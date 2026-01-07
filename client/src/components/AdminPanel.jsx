@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_ENDPOINTS from "../config";
 
 export default function AdminPanel() {
   const [vehicles, setVehicles] = useState([]);
@@ -123,7 +124,7 @@ export default function AdminPanel() {
   const fetchVehicles = async (authToken) => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/vehicles");
+      const response = await fetch(API_ENDPOINTS.VEHICLES);
       const data = await response.json();
       setVehicles(data);
     } catch (err) {
@@ -168,8 +169,8 @@ export default function AdminPanel() {
       };
 
       const endpoint = editingId
-        ? `http://localhost:5000/api/vehicles/${editingId}`
-        : "http://localhost:5000/api/vehicles";
+        ? API_ENDPOINTS.VEHICLE_DETAIL(editingId)
+        : API_ENDPOINTS.VEHICLES;
 
       const method = editingId ? "PUT" : "POST";
 
@@ -203,7 +204,7 @@ export default function AdminPanel() {
       return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/vehicles/${id}`, {
+      const response = await fetch(API_ENDPOINTS.VEHICLE_DETAIL(id), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
