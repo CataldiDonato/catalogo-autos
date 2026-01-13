@@ -1,9 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
 const initializeDatabase = require("./initDB");
 const authMiddleware = require("./middleware/auth");
 require("dotenv").config();
@@ -12,10 +14,48 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 
+// Crear directorio de uploads si no existe
+const uploadsDir = path.join(__dirname, "../client/public/uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configurar multer para uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    const name = path.basename(file.originalname, ext);
+    cb(null, name + "-" + uniqueSuffix + ext);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/avif",
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Tipo de archivo no permitido"));
+    }
+  },
+});
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use("/uploads", express.static(uploadsDir));
 
 // Configurar conexión a PostgreSQL
 const pool = new Pool({
@@ -131,7 +171,14 @@ app.post("/api/auth/login", async (req, res) => {
 // GET /api/vehicles - Obtener todos los autos (Público)
 app.get("/api/vehicles", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM vehicles ORDER BY id ASC");
+    const result = await pool.query(
+      `SELECT v.*, 
+              json_agg(json_build_object('id', vi.id, 'image_path', vi.image_path, 'is_cover', vi.is_cover, 'position', vi.position)) as images
+       FROM vehicles v
+       LEFT JOIN vehicle_images vi ON v.id = vi.vehicle_id
+       GROUP BY v.id
+       ORDER BY v.id ASC`
+    );
     res.json(result.rows);
   } catch (err) {
     console.error("Error al obtener vehículos:", err);
@@ -144,9 +191,15 @@ app.get("/api/vehicles/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query("SELECT * FROM vehicles WHERE id = $1", [
-      id,
-    ]);
+    const result = await pool.query(
+      `SELECT v.*, 
+              json_agg(json_build_object('id', vi.id, 'image_path', vi.image_path, 'is_cover', vi.is_cover, 'position', vi.position)) as images
+       FROM vehicles v
+       LEFT JOIN vehicle_images vi ON v.id = vi.vehicle_id
+       WHERE v.id = $1
+       GROUP BY v.id`,
+      [id]
+    );
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Vehículo no encontrado" });
@@ -192,32 +245,71 @@ app.post("/api/contact", async (req, res) => {
 
 // ==================== RUTAS CRUD PROTEGIDAS ====================
 
+// POST /api/upload - Cargar imágenes (Protegido)
+app.post(
+  "/api/upload",
+  authMiddleware,
+  upload.array("images", 20),
+  async (req, res) => {
+    try {
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: "No se cargaron archivos" });
+      }
+
+      const uploadedFiles = req.files.map((file) => ({
+        filename: file.filename,
+        path: `/uploads/${file.filename}`,
+        size: file.size,
+      }));
+
+      res.json({
+        success: true,
+        message: "Archivos cargados exitosamente",
+        files: uploadedFiles,
+      });
+    } catch (err) {
+      console.error("Error al cargar archivos:", err);
+      res.status(500).json({ error: "Error al cargar archivos" });
+    }
+  }
+);
+
 // POST /api/vehicles - Crear nuevo vehículo (Protegido)
 app.post("/api/vehicles", authMiddleware, async (req, res) => {
-  const { brand, model, year, price, image_url, description, ...specs } =
-    req.body;
+  const { brand, model, year, price, description, images, ...specs } = req.body;
 
-  if (!brand || !model || !year || !price || !image_url || !description) {
+  if (
+    !brand ||
+    !model ||
+    !year ||
+    !price ||
+    !description ||
+    !images ||
+    images.length === 0
+  ) {
     return res.status(400).json({ error: "Campos requeridos faltantes" });
   }
 
+  const client = await pool.connect();
   try {
-    const result = await pool.query(
+    await client.query("BEGIN");
+
+    // Crear vehículo
+    const vehicleResult = await client.query(
       `INSERT INTO vehicles 
-       (brand, model, year, price, image_url, description, motor, potencia, torque, 
+       (brand, model, year, price, description, motor, potencia, torque, 
         combustible, transmision, traccion, consumo_urbano, consumo_ruta, consumo_mixto, 
         largo, ancho, alto, peso, cilindrada, aceleracion, velocidad_maxima, tanque, maletero, 
         equipamiento, seguridad) 
        VALUES 
-       ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
-        $20, $21, $22, $23, $24, $25, $26) 
+       ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, 
+        $19, $20, $21, $22, $23, $24, $25) 
        RETURNING *`,
       [
         brand,
         model,
         year,
         price,
-        image_url,
         description,
         specs.motor,
         specs.potencia,
@@ -242,39 +334,69 @@ app.post("/api/vehicles", authMiddleware, async (req, res) => {
       ]
     );
 
+    const vehicleId = vehicleResult.rows[0].id;
+
+    // Agregar imágenes
+    const imageArray = Array.isArray(images) ? images : [images];
+    for (let i = 0; i < imageArray.length; i++) {
+      await client.query(
+        `INSERT INTO vehicle_images (vehicle_id, image_path, is_cover, position)
+         VALUES ($1, $2, $3, $4)`,
+        [vehicleId, imageArray[i], i === 0, i]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    // Obtener vehículo con imágenes
+    const vehicleWithImages = await pool.query(
+      `SELECT v.*, 
+              json_agg(json_build_object('id', vi.id, 'image_path', vi.image_path, 'is_cover', vi.is_cover, 'position', vi.position)) as images
+       FROM vehicles v
+       LEFT JOIN vehicle_images vi ON v.id = vi.vehicle_id
+       WHERE v.id = $1
+       GROUP BY v.id`,
+      [vehicleId]
+    );
+
     res.status(201).json({
       success: true,
       message: "Vehículo creado exitosamente",
-      data: result.rows[0],
+      data: vehicleWithImages.rows[0],
     });
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error("Error al crear vehículo:", err);
     res.status(500).json({ error: "Error al crear vehículo" });
+  } finally {
+    client.release();
   }
 });
 
 // PUT /api/vehicles/:id - Actualizar vehículo (Protegido)
 app.put("/api/vehicles/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { brand, model, year, price, image_url, description, ...specs } =
-    req.body;
+  const { brand, model, year, price, description, images, ...specs } = req.body;
 
+  const client = await pool.connect();
   try {
-    const result = await pool.query(
+    await client.query("BEGIN");
+
+    // Actualizar vehículo
+    const result = await client.query(
       `UPDATE vehicles SET 
-       brand = $1, model = $2, year = $3, price = $4, image_url = $5, description = $6,
-       motor = $7, potencia = $8, torque = $9, combustible = $10, transmision = $11,
-       traccion = $12, consumo_urbano = $13, consumo_ruta = $14, consumo_mixto = $15,
-       largo = $16, ancho = $17, alto = $18, peso = $19, cilindrada = $20, aceleracion = $21,
-       velocidad_maxima = $22, tanque = $23, maletero = $24, equipamiento = $25, seguridad = $26
-       WHERE id = $27 
+       brand = $1, model = $2, year = $3, price = $4, description = $5,
+       motor = $6, potencia = $7, torque = $8, combustible = $9, transmision = $10,
+       traccion = $11, consumo_urbano = $12, consumo_ruta = $13, consumo_mixto = $14,
+       largo = $15, ancho = $16, alto = $17, peso = $18, cilindrada = $19, aceleracion = $20,
+       velocidad_maxima = $21, tanque = $22, maletero = $23, equipamiento = $24, seguridad = $25
+       WHERE id = $26 
        RETURNING *`,
       [
         brand,
         model,
         year,
         price,
-        image_url,
         description,
         specs.motor,
         specs.potencia,
@@ -301,17 +423,52 @@ app.put("/api/vehicles/:id", authMiddleware, async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      await client.query("ROLLBACK");
       return res.status(404).json({ error: "Vehículo no encontrado" });
     }
+
+    // Actualizar imágenes si se proporcionan
+    if (images && images.length > 0) {
+      // Eliminar imágenes antiguas
+      await client.query("DELETE FROM vehicle_images WHERE vehicle_id = $1", [
+        id,
+      ]);
+
+      // Agregar nuevas imágenes
+      const imageArray = Array.isArray(images) ? images : [images];
+      for (let i = 0; i < imageArray.length; i++) {
+        await client.query(
+          `INSERT INTO vehicle_images (vehicle_id, image_path, is_cover, position)
+           VALUES ($1, $2, $3, $4)`,
+          [id, imageArray[i], i === 0, i]
+        );
+      }
+    }
+
+    await client.query("COMMIT");
+
+    // Obtener vehículo actualizado con imágenes
+    const vehicleWithImages = await pool.query(
+      `SELECT v.*, 
+              json_agg(json_build_object('id', vi.id, 'image_path', vi.image_path, 'is_cover', vi.is_cover, 'position', vi.position)) as images
+       FROM vehicles v
+       LEFT JOIN vehicle_images vi ON v.id = vi.vehicle_id
+       WHERE v.id = $1
+       GROUP BY v.id`,
+      [id]
+    );
 
     res.json({
       success: true,
       message: "Vehículo actualizado exitosamente",
-      data: result.rows[0],
+      data: vehicleWithImages.rows[0],
     });
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error("Error al actualizar vehículo:", err);
     res.status(500).json({ error: "Error al actualizar vehículo" });
+  } finally {
+    client.release();
   }
 });
 

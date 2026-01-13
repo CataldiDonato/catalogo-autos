@@ -5,7 +5,7 @@ CREATE TABLE vehicles (
   model VARCHAR(100) NOT NULL,
   year INT NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
-  image_url TEXT NOT NULL,
+  image_url TEXT,
   description TEXT NOT NULL,
   
   -- Especificaciones Técnicas
@@ -63,6 +63,17 @@ CREATE TABLE contacts (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Crear tabla vehicle_images para almacenar múltiples imágenes
+CREATE TABLE vehicle_images (
+  id SERIAL PRIMARY KEY,
+  vehicle_id INT NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
+  image_path TEXT NOT NULL,
+  is_cover BOOLEAN DEFAULT FALSE,
+  position INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Crear índices para optimizar búsquedas
 CREATE INDEX idx_vehicles_brand ON vehicles(brand);
 CREATE INDEX idx_contacts_email ON contacts(email);
+CREATE INDEX idx_vehicle_images_vehicle_id ON vehicle_images(vehicle_id);

@@ -10,6 +10,7 @@ export default function AdminPanel() {
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [token, setToken] = useState("");
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   // Filtros
   const [filters, setFilters] = useState({
@@ -25,7 +26,8 @@ export default function AdminPanel() {
     model: "",
     year: new Date().getFullYear(),
     price: "",
-    image_url: "",
+    images: [],
+    imagePreviews: [],
     description: "",
     motor: "",
     potencia: "",
@@ -143,6 +145,71 @@ export default function AdminPanel() {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    // Crear previsualizaciones
+    const previews = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setFormData((prev) => ({
+      ...prev,
+      images: files,
+      imagePreviews: previews,
+    }));
+  };
+
+  const removeImagePreview = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      imagePreviews: prev.imagePreviews.filter((_, i) => i !== index),
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const uploadImages = async () => {
+    if (formData.images.length === 0) {
+      setError("Selecciona al menos una imagen");
+      return;
+    }
+
+    setUploadingImages(true);
+    const formDataToSend = new FormData();
+
+    formData.images.forEach((file) => {
+      formDataToSend.append("images", file);
+    });
+
+    try {
+      const response = await fetch(API_ENDPOINTS.UPLOAD, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formDataToSend,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Error al cargar imágenes");
+        setUploadingImages(false);
+        return;
+      }
+
+      // Retornar las rutas de las imágenes subidas
+      setUploadingImages(false);
+      return data.files.map((f) => f.path);
+    } catch (err) {
+      setError("Error de conexión al subir imágenes");
+      setUploadingImages(false);
+      console.error(err);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -154,10 +221,29 @@ export default function AdminPanel() {
     }
 
     try {
+      // Subir imágenes primero
+      let imagePaths = [];
+      if (formData.imagePreviews.length > 0 && formData.images.length > 0) {
+        imagePaths = await uploadImages();
+        if (!imagePaths) {
+          return;
+        }
+      } else if (editingId && formData.imagePreviews.length === 0) {
+        // Si estamos editando y no hay nuevas imágenes, usar las existentes
+        const existingVehicle = vehicles.find((v) => v.id === editingId);
+        if (existingVehicle && existingVehicle.images) {
+          imagePaths = existingVehicle.images.map((img) => img.image_path);
+        }
+      } else {
+        setError("Debes seleccionar al menos una imagen");
+        return;
+      }
+
       const payload = {
         ...formData,
         year: parseInt(formData.year),
         price: parseFloat(formData.price),
+        images: imagePaths,
         equipamiento: formData.equipamiento
           .split(",")
           .map((s) => s.trim())
@@ -167,6 +253,10 @@ export default function AdminPanel() {
           .map((s) => s.trim())
           .filter((s) => s),
       };
+
+      // Eliminar campos que no necesitamos enviar
+      delete payload.image_url;
+      delete payload.imagePreviews;
 
       const endpoint = editingId
         ? API_ENDPOINTS.VEHICLE_DETAIL(editingId)
@@ -228,7 +318,39 @@ export default function AdminPanel() {
 
   const handleEdit = (vehicle) => {
     setFormData({
-      ...vehicle,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      year: vehicle.year,
+      price: vehicle.price,
+      images: [],
+      imagePreviews: vehicle.images
+        ? vehicle.images
+            .sort((a, b) => a.position - b.position)
+            .map((img) => ({
+              file: null,
+              preview: img.image_path,
+              isCover: img.is_cover,
+            }))
+        : [],
+      description: vehicle.description,
+      motor: vehicle.motor || "",
+      potencia: vehicle.potencia || "",
+      torque: vehicle.torque || "",
+      combustible: vehicle.combustible || "",
+      transmision: vehicle.transmision || "",
+      traccion: vehicle.traccion || "",
+      consumo_urbano: vehicle.consumo_urbano || "",
+      consumo_ruta: vehicle.consumo_ruta || "",
+      consumo_mixto: vehicle.consumo_mixto || "",
+      largo: vehicle.largo || "",
+      ancho: vehicle.ancho || "",
+      alto: vehicle.alto || "",
+      peso: vehicle.peso || "",
+      cilindrada: vehicle.cilindrada || "",
+      aceleracion: vehicle.aceleracion || "",
+      velocidad_maxima: vehicle.velocidad_maxima || "",
+      tanque: vehicle.tanque || "",
+      maletero: vehicle.maletero || "",
       equipamiento: Array.isArray(vehicle.equipamiento)
         ? vehicle.equipamiento.join(", ")
         : "",
@@ -246,7 +368,8 @@ export default function AdminPanel() {
       model: "",
       year: new Date().getFullYear(),
       price: "",
-      image_url: "",
+      images: [],
+      imagePreviews: [],
       description: "",
       motor: "",
       potencia: "",
@@ -271,6 +394,7 @@ export default function AdminPanel() {
     });
     setEditingId(null);
     setShowModal(false);
+    setError("");
   };
 
   const handleLogout = () => {
@@ -296,6 +420,13 @@ export default function AdminPanel() {
       </div>
     );
   }
+
+  const getCoverImage = () => {
+    if (formData.imagePreviews.length > 0) {
+      return formData.imagePreviews[0].preview;
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -325,7 +456,10 @@ export default function AdminPanel() {
         )}
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setEditingId(null);
+            setShowModal(true);
+          }}
           className="mb-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           + Agregar Nuevo Vehículo
@@ -400,17 +534,54 @@ export default function AdminPanel() {
 
                   <div className="md:col-span-2">
                     <label className="block font-bold mb-2">
-                      URL de Imagen
+                      🖼️ Fotos del Auto (La primera será la portada)
                     </label>
                     <input
-                      type="text"
-                      name="image_url"
-                      value={formData.image_url}
-                      onChange={handleChange}
-                      required
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded"
                     />
+                    <p className="text-sm text-gray-600 mt-2">
+                      Selecciona una o varias imágenes. La primera será mostrada
+                      como portada.
+                    </p>
                   </div>
+
+                  {formData.imagePreviews.length > 0 && (
+                    <div className="md:col-span-2">
+                      <label className="block font-bold mb-2">
+                        Vista previa de imágenes (
+                        {formData.imagePreviews.length})
+                      </label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {formData.imagePreviews.map((preview, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={preview.preview}
+                              alt={`Preview ${index + 1}`}
+                              className={`w-full h-24 object-cover rounded ${
+                                index === 0 ? "border-4 border-blue-600" : ""
+                              }`}
+                            />
+                            {index === 0 && (
+                              <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                                Portada
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeImagePreview(index)}
+                              className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition"
+                            >
+                              <span className="text-white text-2xl">✕</span>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="md:col-span-2">
                     <label className="block font-bold mb-2">Descripción</label>
@@ -529,9 +700,15 @@ export default function AdminPanel() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
+                    disabled={uploadingImages}
+                    className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-2 px-6 rounded"
                   >
-                    {editingId ? "Actualizar" : "Crear"} Vehículo
+                    {uploadingImages
+                      ? "Subiendo imágenes..."
+                      : editingId
+                      ? "Actualizar"
+                      : "Crear"}{" "}
+                    Vehículo
                   </button>
                 </div>
               </form>
@@ -641,42 +818,55 @@ export default function AdminPanel() {
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredVehicles.map((vehicle) => (
-              <div
-                key={vehicle.id}
-                className="bg-white p-4 rounded-lg shadow-lg"
-              >
-                <img
-                  src={vehicle.image_url}
-                  alt={vehicle.model}
-                  className="w-full h-48 object-cover rounded mb-4"
-                />
-                <h3 className="text-xl font-bold">
-                  {vehicle.brand} {vehicle.model}
-                </h3>
-                <p className="text-gray-600 mb-2">Año: {vehicle.year}</p>
-                <p className="text-lg font-bold text-blue-600 mb-2">
-                  ${parseFloat(vehicle.price).toLocaleString("es-AR")}
-                </p>
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {vehicle.description}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(vehicle)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded flex-1"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(vehicle.id)}
-                    className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded flex-1"
-                  >
-                    Eliminar
-                  </button>
+            {filteredVehicles.map((vehicle) => {
+              const coverImage = vehicle.images
+                ? vehicle.images.find((img) => img.is_cover)?.image_path ||
+                  vehicle.images[0]?.image_path
+                : null;
+              return (
+                <div
+                  key={vehicle.id}
+                  className="bg-white p-4 rounded-lg shadow-lg"
+                >
+                  {coverImage && (
+                    <img
+                      src={coverImage}
+                      alt={vehicle.model}
+                      className="w-full h-48 object-cover rounded mb-4"
+                    />
+                  )}
+                  <h3 className="text-xl font-bold">
+                    {vehicle.brand} {vehicle.model}
+                  </h3>
+                  <p className="text-gray-600 mb-2">Año: {vehicle.year}</p>
+                  <p className="text-lg font-bold text-blue-600 mb-2">
+                    ${parseFloat(vehicle.price).toLocaleString("es-AR")}
+                  </p>
+                  {vehicle.images && (
+                    <p className="text-sm text-gray-500 mb-2">
+                      📸 {vehicle.images.filter((img) => img).length} fotos
+                    </p>
+                  )}
+                  <p className="text-gray-600 mb-4 line-clamp-2">
+                    {vehicle.description}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(vehicle)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded flex-1"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(vehicle.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded flex-1"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

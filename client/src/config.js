@@ -19,6 +19,9 @@ export const API_ENDPOINTS = {
   VEHICLES: `${API_BASE_URL}/api/vehicles`,
   VEHICLE_DETAIL: (id) => `${API_BASE_URL}/api/vehicles/${id}`,
 
+  // Uploads
+  UPLOAD: `${API_BASE_URL}/api/upload`,
+
   // Contacto
   CONTACT: `${API_BASE_URL}/api/contact`,
 };

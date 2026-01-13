@@ -4,12 +4,24 @@ import { formatPrice } from "../utils/formatters";
 export default function VehicleCard({ vehicle }) {
   const navigate = useNavigate();
 
+  // Obtener imagen de portada o primera imagen disponible
+  const getCoverImage = () => {
+    if (vehicle.images && Array.isArray(vehicle.images)) {
+      const coverImage = vehicle.images.find((img) => img.is_cover);
+      if (coverImage) return coverImage.image_path;
+      if (vehicle.images.length > 0) return vehicle.images[0].image_path;
+    }
+    return vehicle.image_url;
+  };
+
+  const coverImage = getCoverImage();
+
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
       {/* Imagen - Más compacta */}
       <div className="relative overflow-hidden h-32 sm:h-40 bg-gray-200">
         <img
-          src={vehicle.image_url}
+          src={coverImage}
           alt={`${vehicle.brand} ${vehicle.model}`}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           onError={(e) => {
@@ -20,6 +32,11 @@ export default function VehicleCard({ vehicle }) {
         <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">
           {vehicle.year}
         </div>
+        {vehicle.images && vehicle.images.length > 1 && (
+          <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-black bg-opacity-60 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+            📸 {vehicle.images.filter((img) => img).length}
+          </div>
+        )}
       </div>
 
       {/* Contenido - Reducido */}
