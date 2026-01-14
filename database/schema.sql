@@ -6,7 +6,8 @@ EXCEPTION
 END $$;
 
 -- Crear tabla publications
-CREATE TABLE publications (
+-- Crear tabla publications
+CREATE TABLE IF NOT EXISTS publications (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     price DECIMAL(15, 2) NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE publications (
 );
 
 -- Crear tabla users
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(100) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
@@ -29,7 +30,7 @@ CREATE TABLE users (
 );
 
 -- Crear tabla contacts
-CREATE TABLE contacts (
+CREATE TABLE IF NOT EXISTS contacts (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE contacts (
 );
 
 -- Crear tabla publication_images
-CREATE TABLE publication_images (
+CREATE TABLE IF NOT EXISTS publication_images (
   id SERIAL PRIMARY KEY,
   publication_id INT NOT NULL REFERENCES publications(id) ON DELETE CASCADE,
   image_path TEXT NOT NULL,
