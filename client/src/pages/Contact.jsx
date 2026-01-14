@@ -256,10 +256,16 @@ export default function Contact() {
         {/* Mapa o sección adicional */}
         <div className="bg-white rounded-lg shadow-md p-8">
           <h2 className="text-2xl font-bold text-primary mb-6">Ubicación</h2>
-          <div className="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
-            <p className="text-gray-500 text-lg">
-              📍 Mapa interactivo vendría aquí
-            </p>
+          <div className="bg-gray-200 rounded-lg h-80 overflow-hidden">
+            <iframe 
+              src="https://maps.google.com/maps?q=Berabev%C3%BA%2C+Santa+Fe%2C+Argentina&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen="" 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
       </div>

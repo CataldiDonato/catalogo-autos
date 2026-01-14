@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API_ENDPOINTS from "../config";
+import whatsappIcon from "../images/whatsappblanco.png";
 
 export default function CarDetail() {
   const { id } = useParams();
@@ -258,19 +259,12 @@ export default function CarDetail() {
               </div>
 
               <a
-                href="https://api.whatsapp.com/send/?phone=543465668393&text=Holaa+Quiero+hacer+una+consulta&type=phone_number&app_absent=0"
+                href={`https://wa.me/543465668393?text=${encodeURIComponent(`Hola quería saber más sobre ${car.title || `${car.brand} ${car.model}`}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-white text-blue-600 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition mb-3"
+                className="block w-full text-center bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
               >
-                Solicitar Prueba
-              </a>
-              <a
-                href="https://api.whatsapp.com/send/?phone=543465668393&text=Holaa+Quiero+hacer+una+consulta&type=phone_number&app_absent=0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center bg-blue-700 text-white py-3 rounded-lg font-bold hover:bg-blue-800 transition"
-              >
+                <img src={whatsappIcon} alt="WhatsApp" className="w-6 h-6" />
                 Contactar Vendedor
               </a>
 
@@ -372,21 +366,7 @@ export default function CarDetail() {
         {/* Equipamiento (si existe en specs, aunque es array, aquí asumimos simple para demo) */}
         {/* Simplemente mostramos JSON crudamente formateado si es complejo, o asumimos estructura previa */}
 
-        {/* CTA Final */}
-        <div className="bg-blue-600 text-white p-12 rounded-xl text-center">
-          <h2 className="text-3xl font-bold mb-4">¿Te interesa?</h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Contacta con nuestros asesores ahora.
-          </p>
-          <a
-            href="https://api.whatsapp.com/send/?phone=543465668393&text=Holaa+Quiero+hacer+una+consulta&type=phone_number&app_absent=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition"
-          >
-            Solicitar Información
-          </a>
-        </div>
+
 
         {/* Autos Relacionados Carousel */}
         {relatedCars.length > 0 && (
