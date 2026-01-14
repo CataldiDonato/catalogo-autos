@@ -2,12 +2,12 @@
  * Configuración de WhatsApp
  */
 export const WHATSAPP_CONFIG = {
-  phone: "543465668393",
-  defaultMessage: "Holaa, quiero hacer una consulta",
+  phone: "543465650796",
+  defaultMessage: "Hola, quiero hacer una consulta",
   consultaUrl:
-    "https://api.whatsapp.com/send/?phone=543465668393&text=Holaa+Quiero+hacer+una+consulta&type=phone_number&app_absent=0",
+    "https://api.whatsapp.com/send/?phone=543465650796&text=Hola+Quiero+hacer+una+consulta&type=phone_number&app_absent=0",
   pruebaUrl:
-    "https://api.whatsapp.com/send/?phone=543465668393&text=Me+gustaria+solicitar+una+prueba+de+manejo&type=phone_number&app_absent=0",
+    "https://api.whatsapp.com/send/?phone=543465650796&text=Me+gustaria+solicitar+una+prueba+de+manejo&type=phone_number&app_absent=0",
 };
 
 /**

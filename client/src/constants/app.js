@@ -3,15 +3,15 @@
  */
 
 export const APP_CONFIG = {
-  name: "AutoCatalog",
+  name: "Ariel Piermattei Maquinarias",
   version: "1.0.0",
   description: "Catálogo de autos moderno y responsivo",
 };
 
 export const CONTACT_INFO = {
-  email: "info@autocatalog.com",
-  phone: "543465668393",
-  whatsapp: "543465668393",
+  email: "piermatteiariel67@gmail.com",
+  phone: "3465650796",
+  whatsapp: "3465650796",
 };
 
 export const PAGINATION = {

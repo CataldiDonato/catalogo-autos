@@ -38,7 +38,7 @@ export default function Home() {
               <span>🚜</span> Ver Catálogo
             </Link>
             <a
-              href="https://api.whatsapp.com/send/?phone=543465668393&text=Hola,+me+interesa+consultar+sobre+maquinaria+o+vehículos&type=phone_number&app_absent=0"
+              href="https://api.whatsapp.com/send/?phone=543465650796&text=Hola,+me+interesa+consultar+sobre+maquinaria+o+vehículos&type=phone_number&app_absent=0"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/20 transition-all duration-300 shadow-xl flex items-center justify-center gap-2"
@@ -72,8 +72,8 @@ export default function Home() {
                 Maquinaria Agrícola
               </h3>
               <p className="text-stone-600 leading-relaxed">
-                Tractores, cosechadoras y sembradoras listas para trabajar. 
-                Equipos nuevos y usados seleccionados.
+                Potencia motorizada para tu campo. Tractores, cosechadoras y 
+                equipos autopropulsados de alto rendimiento.
               </p>
             </div>
 
@@ -83,11 +83,11 @@ export default function Home() {
                 🛻
               </div>
               <h3 className="text-2xl font-bold text-emerald-950 mb-3">
-                Vehículos Utilitarios
+                Vehículos
               </h3>
               <p className="text-stone-600 leading-relaxed">
-                Pick-ups 4x4, utilitarios y autos para la familia. 
-                La movilidad que tu negocio necesita.
+                Encontrá cualquier tipo de vehículo. Desde camionetas de trabajo 
+                hasta autos particulares. Tu movilidad resuelta.
               </p>
             </div>
 
@@ -97,11 +97,11 @@ export default function Home() {
                 🛠️
               </div>
               <h3 className="text-2xl font-bold text-emerald-950 mb-3">
-                Herramientas
+                Herramientas e Implementos
               </h3>
               <p className="text-stone-600 leading-relaxed">
-                Insumos y herramientas profesionales para taller y campo. 
-                Todo en un solo lugar.
+                Equipamiento especializado: Tolvas, plataformas, sembradoras 
+                y todo lo necesario para complementar tu maquinaria.
               </p>
             </div>
           </div>
@@ -126,6 +126,59 @@ export default function Home() {
           >
             Explorar Catálogo
           </Link>
+        </div>
+      </section>
+
+      {/* Contact Section Relocated */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto bg-stone-50 rounded-2xl shadow-xl overflow-hidden border border-stone-200">
+             <div className="grid grid-cols-1 md:grid-cols-2">
+                {/* Info */}
+                <div className="p-8 md:p-12 flex flex-col justify-center">
+                    <h2 className="text-3xl font-bold text-emerald-950 mb-8 font-serif">Visitanos</h2>
+                    
+                    <div className="space-y-6">
+                        <div className="flex items-start space-x-4">
+                            <div className="text-2xl text-amber-500">📍</div>
+                            <div>
+                                <h3 className="font-bold text-emerald-900 mb-1">Ubicación</h3>
+                                <p className="text-stone-600">Caseros, Santa Fe</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start space-x-4">
+                             <div className="text-2xl text-amber-500">✉️</div>
+                            <div>
+                                <h3 className="font-bold text-emerald-900 mb-1">Email</h3>
+                                <p className="text-stone-600">piermatteiariel67@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start space-x-4">
+                            <div className="text-2xl text-amber-500">📱</div>
+                            <div>
+                                <h3 className="font-bold text-emerald-900 mb-1">Teléfono</h3>
+                                <p className="text-stone-600">3465-650796 (Ariel Piermattei)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Map */}
+                <div className="h-64 md:h-auto bg-gray-200">
+                    <iframe 
+                      src="https://maps.google.com/maps?q=Caseros%2C+Santa+Fe%2C+Argentina&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                      width="100%" 
+                      height="100%" 
+                      style={{ border: 0 }} 
+                      allowFullScreen="" 
+                      loading="lazy" 
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                </div>
+             </div>
+          </div>
         </div>
       </section>
     </div>

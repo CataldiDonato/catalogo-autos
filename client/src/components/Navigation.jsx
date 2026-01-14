@@ -20,8 +20,8 @@ export default function Navigation() {
             to="/"
             className="flex items-center space-x-2 font-bold text-2xl text-white hover:text-emerald-200 transition"
           >
-            <span className="text-emerald-400">🚜</span>
-            <span>Agro & Autos</span>
+            <img src="/logo.png" alt="Agro & Autos Logo" className="h-12 w-12 object-cover rounded-full" />
+            <span className="text-white hover:text-emerald-200 transition">Ariel Piermattei Maquinarias</span>
           </Link>
 
           {/* Menu Desktop */}
@@ -38,12 +38,7 @@ export default function Navigation() {
             >
               Catálogo
             </Link>
-            <Link
-              to="/contacto"
-              className="text-emerald-100 font-medium hover:text-white transition duration-300"
-            >
-              Contacto
-            </Link>
+
 
             {/* Botones de autenticación */}
             {isAuthenticated ? (
@@ -98,13 +93,7 @@ export default function Navigation() {
             >
               Catálogo
             </Link>
-            <Link
-              to="/contacto"
-              className="block py-2 text-emerald-100 font-medium hover:text-white transition px-4"
-              onClick={() => setIsOpen(false)}
-            >
-              Contacto
-            </Link>
+
 
             {/* Botones mobile */}
             {isAuthenticated ? (

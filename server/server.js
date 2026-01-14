@@ -163,24 +163,8 @@ app.post("/api/auth/login", async (req, res) => {
 
 // ==================== HELPER DE VALIDACIÓN ====================
 const validarSpecs = (category, specs) => {
-  if (!specs || typeof specs !== 'object') return { valid: false, error: "Specs debe ser un objeto JSON" };
-  
-  switch(category) {
-    case 'VEHICULO':
-      if (!specs.km && specs.km !== 0) return { valid: false, error: "Falta 'km' en specs para vehiculo" };
-      if (!specs.year) return { valid: false, error: "Falta 'year' en specs para vehiculo" };
-      break;
-    case 'MAQUINARIA':
-      if (!specs.horas && specs.horas !== 0) return { valid: false, error: "Falta 'horas' en specs para maquinaria" };
-      if (!specs.year) return { valid: false, error: "Falta 'year' en specs para maquinaria" };
-      break;
-    case 'HERRAMIENTA':
-      if (!specs.condicion) return { valid: false, error: "Falta 'condicion' (nuevo/usado) en specs para herramienta" };
-      break;
-    default:
-      // Si la categoría no es válida, lo manejaremos en el controlador
-      return { valid: true }; 
-  }
+  // Ahora permitimos specs vacíos o incompletos
+  if (!specs || typeof specs !== 'object') return { valid: true }; // Consideramos válido incluso si es null
   return { valid: true };
 };
 
@@ -314,11 +298,16 @@ app.post("/api/publications", authMiddleware, async (req, res) => {
   // specs es un JSON con los detalles (km, año, horas, etc)
   const { title, price, currency, description, category, images, specs } = req.body;
 
-  if (!title || !price || !category) {
-    return res.status(400).json({ error: "Título, precio y categoría son requeridos" });
+  // Solo categoría es estrictamente necesaria para la lógica interna, el resto puede ser vacío
+  if (!category) {
+    return res.status(400).json({ error: "Categoría es requerida" });
   }
 
-  // Validar specs según categoría
+  // Precios y títulos por defecto si no vienen
+  const finalPrice = price || 0;
+  const finalTitle = title || "Sin Título";
+
+  // Validar specs según categoría (ya no estricto)
   const validation = validarSpecs(category, specs);
   if (!validation.valid) {
     return res.status(400).json({ error: validation.error });
@@ -334,7 +323,7 @@ app.post("/api/publications", authMiddleware, async (req, res) => {
        (title, price, currency, description, category, specs) 
        VALUES ($1, $2, $3, $4, $5, $6) 
        RETURNING *`,
-      [title, price, currency || 'USD', description || '', category, JSON.stringify(specs || {})]
+      [finalTitle, finalPrice, currency || 'USD', description || '', category, JSON.stringify(specs || {})]
     );
 
     const publicationId = pubResult.rows[0].id;

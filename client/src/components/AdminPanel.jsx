@@ -244,10 +244,12 @@ export default function AdminPanel() {
         if (existingVehicle && existingVehicle.images) {
           imagePaths = existingVehicle.images.map((img) => img.image_path);
         }
-      } else {
-        setError("Debes seleccionar al menos una imagen");
-        return;
-      }
+        if (existingVehicle && existingVehicle.images) {
+          imagePaths = existingVehicle.images.map((img) => img.image_path);
+        }
+      } 
+      // Si no hay imágenes, simplemente seguimos sin ellas
+
 
       // PREPARAR EL PAYLOAD (Empaquetar specs según categoría)
       const specs = {};
@@ -546,7 +548,6 @@ export default function AdminPanel() {
                       value={formData.price}
                       onChange={handleChange}
                       step="0.01"
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded"
                     />
                   </div>
@@ -556,19 +557,19 @@ export default function AdminPanel() {
                   <>
                       <div>
                         <label className="block font-bold mb-2">Marca</label>
-                        <input type="text" name="brand" value={formData.brand} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                       <div>
                         <label className="block font-bold mb-2">Modelo</label>
-                        <input type="text" name="model" value={formData.model} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="text" name="model" value={formData.model} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                       <div>
                         <label className="block font-bold mb-2">Año</label>
-                        <input type="number" name="year" value={formData.year} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="number" name="year" value={formData.year} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                        <div>
                         <label className="block font-bold mb-2">Kilómetros</label>
-                        <input type="number" name="km" value={formData.km} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="number" name="km" value={formData.km} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                       <div>
                         <label className="block font-bold mb-2">Transmisión</label>
@@ -595,19 +596,19 @@ export default function AdminPanel() {
                   <>
                        <div>
                         <label className="block font-bold mb-2">Marca</label>
-                        <input type="text" name="brand" value={formData.brand} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                       <div>
                         <label className="block font-bold mb-2">Modelo</label>
-                        <input type="text" name="model" value={formData.model} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="text" name="model" value={formData.model} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                        <div>
                         <label className="block font-bold mb-2">Año</label>
-                        <input type="number" name="year" value={formData.year} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" />
+                        <input type="number" name="year" value={formData.year} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" />
                       </div>
                       <div>
                         <label className="block font-bold mb-2">Horas de Uso</label>
-                        <input type="number" name="horas" value={formData.horas} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded" placeholder="Ej: 5000" />
+                        <input type="number" name="horas" value={formData.horas} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded" placeholder="Ej: 5000" />
                       </div>
                       <div>
                         <label className="block font-bold mb-2">Potencia (HP)</label>
@@ -682,7 +683,6 @@ export default function AdminPanel() {
                       name="description"
                       value={formData.description}
                       onChange={handleChange}
-                      required
                       rows="3"
                       className="w-full px-3 py-2 border border-gray-300 rounded"
                     ></textarea>

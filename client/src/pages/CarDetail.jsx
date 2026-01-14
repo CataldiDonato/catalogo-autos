@@ -11,6 +11,7 @@ export default function CarDetail() {
   const [error, setError] = useState(null);
   const [relatedCars, setRelatedCars] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showZoom, setShowZoom] = useState(false);
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -146,13 +147,14 @@ export default function CarDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Carrusel de Imágenes */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-100 rounded-xl overflow-hidden shadow-lg mb-6 relative group">
+            <div className="bg-gray-100 rounded-xl overflow-hidden shadow-lg mb-6 relative group flex items-center justify-center bg-opacity-20">
               <img
                 src={currentImage}
                 alt={`${car.brand} ${car.model} - Foto ${
                   currentImageIndex + 1
                 }`}
-                className="w-full h-96 object-cover"
+                onClick={() => setShowZoom(true)}
+                className="w-full h-auto max-h-[80vh] object-contain mx-auto cursor-zoom-in"
               />
 
               {/* Controles del Carrusel */}
@@ -259,7 +261,9 @@ export default function CarDetail() {
               </div>
 
               <a
-                href={`https://wa.me/543465668393?text=${encodeURIComponent(`Hola quería saber más sobre ${car.title || `${car.brand} ${car.model}`}`)}`}
+                href={`https://wa.me/543465650796?text=${encodeURIComponent(
+                  `Hola, me interesa: ${car.title || `${car.brand} ${car.model}`}`
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full text-center bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
@@ -271,8 +275,8 @@ export default function CarDetail() {
               <button
                 onClick={async () => {
                   const shareData = {
-                    title: car.title || `${car.brand} ${car.model}`,
-                    text: `Mira este ${car.title || `${car.brand} ${car.model}`} en venta!`,
+                    title: `Ariel Piermattei Maquinarias: ${car.title || `${car.brand} ${car.model}`}`,
+                    text: `Mira esta máquina: ${car.title || `${car.brand} ${car.model}`}. Entra al enlace para ver más detalles.`,
                     url: window.location.href,
                   };
 
@@ -419,6 +423,43 @@ export default function CarDetail() {
                 );
               })}
             </div>
+          </div>
+        )}
+        {/* Modal Zoom */}
+        {showZoom && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-95 p-4"
+            onClick={() => setShowZoom(false)}
+          >
+            <button
+              onClick={() => setShowZoom(false)}
+              className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-50"
+            >
+              ✕
+            </button>
+            <img
+              src={currentImage}
+              alt="Zoom"
+              className="max-w-full max-h-[90vh] object-contain"
+              onClick={(e) => e.stopPropagation()} 
+            />
+             {/* Navegación en Zoom (Opcional, reutilizando funciones existentes) */}
+             {images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white p-4 text-5xl hover:text-gray-300 transition"
+                  >
+                    ‹
+                  </button>
+                  <button
+                     onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white p-4 text-5xl hover:text-gray-300 transition"
+                  >
+                    ›
+                  </button>
+                </>
+             )}
           </div>
         )}
       </div>
