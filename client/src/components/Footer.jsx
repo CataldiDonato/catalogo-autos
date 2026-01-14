@@ -2,54 +2,54 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-white mt-16">
+    <footer className="bg-emerald-950 text-white mt-16 border-t border-emerald-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-lg font-bold mb-4 text-white">
-              Sobre Nosotros
+            <h3 className="text-lg font-bold mb-4 text-emerald-400">
+              Agro & Autos
             </h3>
-            <p className="text-gray-400">
-              Tu portal confiable para encontrar el auto de tus sueños con las
-              mejores marcas del mercado.
+            <p className="text-emerald-100/70">
+              Expertos en conectar el campo con la movilidad. Encontrá maquinaria, 
+              herramientas y vehículos con la confianza de siempre.
             </p>
           </div>
           <div>
-            <h3 className="text-lg font-bold mb-4 text-white">
+            <h3 className="text-lg font-bold mb-4 text-emerald-400">
               Enlaces Rápidos
             </h3>
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-2 text-emerald-100/70">
               <li>
-                <a href="/" className="hover:text-blue-400 transition">
+                <a href="/" className="hover:text-emerald-300 transition">
                   Inicio
                 </a>
               </li>
               <li>
-                <a href="/catalogo" className="hover:text-blue-400 transition">
-                  Catálogo
+                <a href="/catalogo" className="hover:text-emerald-300 transition">
+                  Catálogo Completo
                 </a>
               </li>
               <li>
-                <a href="/contacto" className="hover:text-blue-400 transition">
+                <a href="/contacto" className="hover:text-emerald-300 transition">
                   Contacto
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-bold mb-4 text-white">Contacto</h3>
-            <p className="text-gray-400">
-              📧 info@autocatalog.com
+            <h3 className="text-lg font-bold mb-4 text-emerald-400">Visítanos</h3>
+            <p className="text-emerald-100/70">
+              📧 ventas@agroyautos.com
               <br />
-              📱 +1 (555) 123-4567
+              📱 +54 9 3465 66-8393
               <br />
-              📍 123 Auto Street, Ciudad
+              📍 Ruta Nacional 93, Berabevú, Santa Fe
             </p>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+        <div className="border-t border-emerald-900 pt-8 text-center text-emerald-100/50 text-sm">
           <p>
-            &copy; {currentYear} AutoCatalog. Todos los derechos reservados.
+            &copy; {currentYear} Agro & Autos. Todos los derechos reservados.
           </p>
         </div>
       </div>

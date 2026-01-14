@@ -12,35 +12,35 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-blue-900 shadow-md">
+    <nav className="bg-emerald-900 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center space-x-2 font-bold text-2xl text-white hover:text-blue-200 transition"
+            className="flex items-center space-x-2 font-bold text-2xl text-white hover:text-emerald-200 transition"
           >
-            <span className="text-blue-300">●</span>
-            <span>AutoCatalog</span>
+            <span className="text-emerald-400">🚜</span>
+            <span>Agro & Autos</span>
           </Link>
 
           {/* Menu Desktop */}
           <div className="hidden md:flex space-x-8 items-center">
             <Link
               to="/"
-              className="text-blue-100 font-medium hover:text-white transition duration-300"
+              className="text-emerald-100 font-medium hover:text-white transition duration-300"
             >
               Inicio
             </Link>
             <Link
               to="/catalogo"
-              className="text-blue-100 font-medium hover:text-white transition duration-300"
+              className="text-emerald-100 font-medium hover:text-white transition duration-300"
             >
               Catálogo
             </Link>
             <Link
               to="/contacto"
-              className="text-blue-100 font-medium hover:text-white transition duration-300"
+              className="text-emerald-100 font-medium hover:text-white transition duration-300"
             >
               Contacto
             </Link>
@@ -48,16 +48,16 @@ export default function Navigation() {
             {/* Botones de autenticación */}
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-blue-100 font-medium">{user?.name}</span>
+                <span className="text-emerald-100 font-medium">{user?.name}</span>
                 <Link
                   to="/admin"
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition"
+                  className="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-medium transition shadow-sm border border-emerald-600"
                 >
                   Panel Admin
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-medium transition"
+                  className="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded font-medium transition shadow-sm"
                 >
                   Cerrar Sesión
                 </button>
@@ -65,7 +65,7 @@ export default function Navigation() {
             ) : (
               <Link
                 to="/auth"
-                className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded font-medium transition"
+                className="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-medium transition shadow-sm border border-emerald-600"
               >
                 Iniciar Sesión
               </Link>
@@ -74,7 +74,7 @@ export default function Navigation() {
 
           {/* Menu Mobile */}
           <button
-            className="md:hidden text-blue-100 text-2xl"
+            className="md:hidden text-emerald-100 text-2xl"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? "✕" : "☰"}
@@ -83,24 +83,24 @@ export default function Navigation() {
 
         {/* Menu Mobile Expandido */}
         {isOpen && (
-          <div className="md:hidden pb-4 space-y-2 border-t border-blue-700 bg-blue-800">
+          <div className="md:hidden pb-4 space-y-2 border-t border-emerald-800 bg-emerald-900">
             <Link
               to="/"
-              className="block py-2 text-blue-100 font-medium hover:text-white transition"
+              className="block py-2 text-emerald-100 font-medium hover:text-white transition px-4"
               onClick={() => setIsOpen(false)}
             >
               Inicio
             </Link>
             <Link
               to="/catalogo"
-              className="block py-2 text-blue-100 font-medium hover:text-white transition"
+              className="block py-2 text-emerald-100 font-medium hover:text-white transition px-4"
               onClick={() => setIsOpen(false)}
             >
               Catálogo
             </Link>
             <Link
               to="/contacto"
-              className="block py-2 text-blue-100 font-medium hover:text-white transition"
+              className="block py-2 text-emerald-100 font-medium hover:text-white transition px-4"
               onClick={() => setIsOpen(false)}
             >
               Contacto
@@ -108,13 +108,13 @@ export default function Navigation() {
 
             {/* Botones mobile */}
             {isAuthenticated ? (
-              <div className="space-y-2 pt-4 border-t border-blue-700">
-                <p className="py-2 text-blue-100 font-medium">
+              <div className="space-y-2 pt-4 border-t border-emerald-800 px-4">
+                <p className="py-2 text-emerald-100 font-medium">
                   Hola, {user?.name}
                 </p>
                 <Link
                   to="/admin"
-                  className="block py-2 bg-green-600 hover:bg-green-700 text-white rounded font-medium text-center transition"
+                  className="block py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded font-medium text-center transition"
                   onClick={() => setIsOpen(false)}
                 >
                   Panel Admin
@@ -124,7 +124,7 @@ export default function Navigation() {
                     handleLogout();
                     setIsOpen(false);
                   }}
-                  className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded font-medium transition"
+                  className="w-full py-2 bg-red-700 hover:bg-red-600 text-white rounded font-medium transition"
                 >
                   Cerrar Sesión
                 </button>
@@ -132,7 +132,7 @@ export default function Navigation() {
             ) : (
               <Link
                 to="/auth"
-                className="block py-2 bg-blue-500 hover:bg-blue-400 text-white rounded font-medium text-center transition"
+                className="block py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded font-medium text-center transition mb-2 mx-4"
                 onClick={() => setIsOpen(false)}
               >
                 Iniciar Sesión

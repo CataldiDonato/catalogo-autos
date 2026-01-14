@@ -222,16 +222,16 @@ export default function Catalog() {
 
         {/* Botones Móviles (Sticky) */}
         {!loading && vehicles.length > 0 && (
-          <div className="lg:hidden sticky top-4 z-40 bg-white shadow-md rounded-lg p-2 mb-6 flex gap-2">
+          <div className="lg:hidden sticky top-4 z-40 bg-white/95 backdrop-blur-sm shadow-md rounded-lg p-2 mb-6 flex gap-2 border border-emerald-100">
             <button 
               onClick={() => setShowMobileFilters(true)}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition"
+              className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition border border-stone-200"
             >
               <span className="text-xl">🌪️</span> Filtrar
             </button>
             <button 
               onClick={() => setShowMobileSort(true)}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition"
+              className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition border border-stone-200"
             >
               <span className="text-xl">⇅</span> Ordenar
             </button>
@@ -244,7 +244,7 @@ export default function Catalog() {
           {/* SIDEBAR FILTROS (Desktop) */}
           {!loading && vehicles.length > 0 && (
             <div className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-4 bg-gray-50 rounded-xl p-6 space-y-6">
+              <div className="sticky top-4 bg-white border border-stone-200 shadow-sm rounded-xl p-6 space-y-6">
                 <FiltersContent 
                   brands={brands} selectedBrand={selectedBrand} setSelectedBrand={setSelectedBrand}
                   maxPrice={maxPrice} priceRange={priceRange} setPriceRange={setPriceRange}
@@ -266,8 +266,8 @@ export default function Catalog() {
               // Loading State
               <div className="flex justify-center items-center min-h-96">
                 <div className="text-center">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                  <p className="text-gray-600 text-lg">Cargando catálogo...</p>
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mb-4"></div>
+                  <p className="text-stone-600 text-lg">Cargando catálogo...</p>
                 </div>
               </div>
             ) : error ? (
@@ -287,17 +287,17 @@ export default function Catalog() {
               </div>
             ) : filteredVehicles.length === 0 ? (
               // Empty State
-              <div className="bg-gray-50 rounded-xl p-12 text-center">
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-12 text-center">
                 <div className="text-6xl mb-4">🔍</div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl font-bold text-stone-900 mb-2">
                   Sin resultados
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-stone-600 mb-6">
                   No encontramos items que coincidan con tus filtros.
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+                  className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition font-semibold"
                 >
                   Ver Todo
                 </button>
@@ -316,11 +316,11 @@ export default function Catalog() {
 
       {/* MODAL MÓVIL: FILTROS */}
       {showMobileFilters && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black bg-opacity-50 transition-opacity">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black bg-opacity-50 transition-opacity backdrop-blur-sm">
           <div className="bg-white w-full h-[90vh] sm:h-auto sm:max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden flex flex-col shadow-2xl animate-slide-up">
-            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-              <h2 className="text-lg font-bold text-gray-800">Filtros</h2>
-              <button onClick={() => setShowMobileFilters(false)} className="text-gray-500 hover:text-gray-800 p-2">✕</button>
+            <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-stone-50">
+              <h2 className="text-lg font-bold text-stone-800">Filtros</h2>
+              <button onClick={() => setShowMobileFilters(false)} className="text-stone-500 hover:text-stone-800 p-2">✕</button>
             </div>
             <div className="p-6 overflow-y-auto flex-1 space-y-6">
                <FiltersContent 
@@ -337,10 +337,10 @@ export default function Catalog() {
                   isMobile={true}
                 />
             </div>
-            <div className="p-4 border-t border-gray-100 bg-gray-50">
+            <div className="p-4 border-t border-stone-100 bg-stone-50">
                <button 
                   onClick={() => setShowMobileFilters(false)}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold"
+                  className="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition"
                >
                  Ver {filteredVehicles.length} resultados
                </button>
@@ -410,7 +410,7 @@ const FiltersContent = ({
       <select
         value={selectedBrand}
         onChange={(e) => setSelectedBrand(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
       >
         {brands.map((brand) => (
           <option key={brand} value={brand}>
@@ -434,9 +434,9 @@ const FiltersContent = ({
           onChange={(e) =>
             setPriceRange([priceRange[0], parseInt(e.target.value)])
           }
-          className="w-full"
+          className="w-full accent-emerald-600"
         />
-        <div className="flex justify-between text-xs text-gray-600">
+        <div className="flex justify-between text-xs text-stone-600">
           <span>${priceRange[0].toLocaleString()}</span>
           <span>${priceRange[1].toLocaleString()}</span>
         </div>
@@ -452,7 +452,7 @@ const FiltersContent = ({
       <select
         value={selectedFuel}
         onChange={(e) => setSelectedFuel(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
       >
         {fuels.map((fuel) => (
           <option key={fuel} value={fuel}>
@@ -471,7 +471,7 @@ const FiltersContent = ({
       <select
         value={selectedTransmission}
         onChange={(e) => setSelectedTransmission(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
       >
         {transmissions.map((trans) => (
           <option key={trans} value={trans}>
@@ -490,7 +490,7 @@ const FiltersContent = ({
       <select
         value={selectedTraction}
         onChange={(e) => setSelectedTraction(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
       >
         {tractions.map((traction) => (
           <option key={traction} value={traction}>
@@ -512,7 +512,7 @@ const FiltersContent = ({
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+          className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
         >
           <option value="name">Nombre (A-Z)</option>
           <option value="precio-asc">Precio ($ ↑)</option>
@@ -525,7 +525,7 @@ const FiltersContent = ({
     {/* Botón Limpiar */}
     <button
       onClick={clearFilters}
-      className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-sm"
+      className="w-full bg-stone-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-stone-700 transition duration-300 text-sm"
     >
       Limpiar Filtros
     </button>
