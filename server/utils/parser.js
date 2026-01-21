@@ -70,9 +70,19 @@ function parsearTextoIngreso(textoUsuario) {
       category = 'MAQUINARIA'; // Inferencia simple
     }
 
-    // Detectar Herramientas (Nuevo/Usado)
+    // Detectar Herramientas (Nuevo/Usado) o Keywords
     if (line.match(/nuevo/i)) specs.condicion = 'Nuevo';
     if (line.match(/usado/i)) specs.condicion = 'Usado';
+    
+    // Keywords fuertes para Maquinaria
+    if (line.match(/(tractor|cosechadora|sembradora|pulverizadora|fumigador)/i)) {
+       category = 'MAQUINARIA';
+    }
+
+    // Keywords fuertes para Herramientas
+    if (line.match(/(tolva|tanque|acoplado|plataforma|cabezal|monitor|banderillero|balanza|moledora|mixer)/i)) {
+       category = 'HERRAMIENTA';
+    }
 
     if (!handled && index > 0) {
       remainingLines.push(line);

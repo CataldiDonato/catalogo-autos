@@ -78,41 +78,11 @@ pool.on("error", (err) => {
 
 // ==================== RUTAS DE AUTENTICACIÓN ====================
 
-// POST /api/auth/register - Registrar nuevo usuario
+// POST /api/auth/register - Registrar nuevo usuario (DESHABILITADO)
 app.post("/api/auth/register", async (req, res) => {
-  const { email, password, name } = req.body;
-
-  if (!email || !password || !name) {
-    return res
-      .status(400)
-      .json({ error: "Email, contraseña y nombre son requeridos" });
-  }
-
-  try {
-    const userExists = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
-      [email]
-    );
-    if (userExists.rows.length > 0) {
-      return res.status(400).json({ error: "El usuario ya existe" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const result = await pool.query(
-      "INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, $4) RETURNING id, email, name",
-      [email, hashedPassword, name, "user"]
-    );
-
-    res.status(201).json({
-      success: true,
-      message: "Usuario registrado exitosamente",
-      user: result.rows[0],
-    });
-  } catch (err) {
-    console.error("Error en registro:", err);
-    res.status(500).json({ error: "Error al registrar usuario" });
-  }
+  return res.status(403).json({ 
+    error: "El registro público está deshabilitado. Contacte al administrador para obtener una cuenta." 
+  });
 });
 
 // POST /api/auth/login - Iniciar sesión
@@ -261,6 +231,107 @@ app.post("/api/bot/parse", (req, res) => {
   res.json({ success: true, data: parsedData });
 });
 
+
+
+// ==================== WEBHOOK N8N (Simplificado) ====================
+// POST /api/webhook/n8n - Endpoint para automatización (sin JWT)
+// Header: x-api-key: <clave_secreta>
+// Body (Multipart): text (string), images (files)
+app.post(
+  "/api/webhook/n8n",
+  upload.array("images", 20),
+  async (req, res) => {
+    const apiKey = req.headers["x-api-key"];
+    
+    // 1. Validar API Key
+    if (!apiKey || apiKey !== (process.env.N8N_API_KEY || "cataldi_secret_123")) {
+      return res.status(401).json({ error: "API Key inválida o faltante" });
+    }
+
+    const { text, title: manualTitle, price: manualPrice, currency: manualCurrency, description: manualDescription, category: manualCategory, specs: manualSpecs } = req.body;
+    
+    // Si no hay texto ni datos manuales, error
+    if (!text && !manualTitle) {
+      return res.status(400).json({ error: "Se requiere al menos 'text' o 'title'" });
+    }
+
+    const client = await pool.connect();
+    try {
+      let parsedData = {};
+      
+      // 1. Si hay texto, parsearlo primero como base
+      if (text) {
+        parsedData = parsearTextoIngreso(text);
+      }
+
+      // 2. Mezclar/Sobreescribir con datos manuales (Prioridad a lo manual)
+      let title = manualTitle || parsedData.title || "Sin Título";
+      let price = manualPrice ? Number(manualPrice) : (parsedData.price || 0);
+      let currency = manualCurrency || parsedData.currency || "USD";
+      let description = manualDescription || parsedData.description || "";
+      let category = (manualCategory && ['VEHICULO', 'MAQUINARIA', 'HERRAMIENTA'].includes(manualCategory.toUpperCase())) 
+                     ? manualCategory.toUpperCase() 
+                     : (parsedData.category || "VEHICULO");
+      
+      let specs = parsedData.specs || {};
+      
+      // Si specs manuales vienen como string (multipart), parsearlas
+      if (manualSpecs) {
+          try {
+            const specsObj = typeof manualSpecs === 'string' ? JSON.parse(manualSpecs) : manualSpecs;
+            specs = { ...specs, ...specsObj };
+          } catch (e) {
+            console.error("Error parseando specs manuales:", e);
+          }
+      }
+
+      await client.query("BEGIN");
+
+      // 3. Crear Publicación
+      const pubResult = await client.query(
+        `INSERT INTO publications 
+         (title, price, currency, description, category, specs) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         RETURNING id`,
+        [title, price, currency, description, category, JSON.stringify(specs)]
+      );
+
+      const publicationId = pubResult.rows[0].id;
+
+      // 4. Guardar Imágenes (si existen)
+      if (req.files && req.files.length > 0) {
+        for (let i = 0; i < req.files.length; i++) {
+          const file = req.files[i];
+          const imagePath = `/uploads/${file.filename}`;
+          
+          await client.query(
+            `INSERT INTO publication_images (publication_id, image_path, is_cover, position)
+             VALUES ($1, $2, $3, $4)`,
+            [publicationId, imagePath, i === 0, i]
+          );
+        }
+      }
+
+      await client.query("COMMIT");
+
+      console.log(`[N8N] Publicación creada: #${publicationId} - ${title}`);
+      
+      res.status(201).json({
+        success: true,
+        message: "Publicación creada vía Webhook",
+        publicationId,
+        data: parsedData
+      });
+
+    } catch (err) {
+      await client.query("ROLLBACK");
+      console.error("[N8N] Error en webhook:", err);
+      res.status(500).json({ error: "Error interno procesando webhook" });
+    } finally {
+      client.release();
+    }
+  }
+);
 
 // ==================== RUTAS CRUD PROTEGIDAS ====================
 

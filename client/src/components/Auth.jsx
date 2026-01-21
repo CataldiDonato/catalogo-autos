@@ -167,19 +167,9 @@ export default function Auth() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}
+          <p className="text-gray-500 text-sm">
+            Para obtener una cuenta, contacte al administrador.
           </p>
-          <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setError("");
-              setSuccess("");
-            }}
-            className="mt-2 text-blue-600 hover:text-blue-800 font-bold"
-          >
-            {isLogin ? "Regístrate aquí" : "Inicia sesión aquí"}
-          </button>
         </div>
       </div>
     </div>
