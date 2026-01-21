@@ -52,10 +52,8 @@ export default function VehicleCard({ vehicle }) {
           {vehicle.description}
         </p>
 
-        <div className="border-t border-gray-200 pt-2 mt-auto">
-          <p className="text-lg sm:text-xl font-bold text-blue-600">
-            {formatPrice(vehicle.price)}
-          </p>
+        <div className="pt-2 mt-auto">
+          {/* Precio eliminado a pedido */}
         </div>
 
         <button

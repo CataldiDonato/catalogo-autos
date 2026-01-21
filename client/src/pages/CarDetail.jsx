@@ -23,10 +23,10 @@ export default function CarDetail() {
         }
         const data = await response.json();
         const mappedCar = {
-            ...data,
-            ...data.specs,
-             brand: data.specs?.brand || (data.title ? data.title.split(' ')[0] : 'Varios'), 
-             model: data.specs?.model || (data.title ? data.title.substring(data.title.indexOf(' ')+1) : ''),
+          ...data,
+          ...data.specs,
+          brand: data.specs?.brand || (data.title ? data.title.split(' ')[0] : 'Varios'),
+          model: data.specs?.model || (data.title ? data.title.substring(data.title.indexOf(' ') + 1) : ''),
         };
         setCar(mappedCar);
         setError(null);
@@ -48,11 +48,11 @@ export default function CarDetail() {
           const otherCars = data
             .filter((c) => c.id !== parseInt(id))
             .map(item => ({
-                ...item,
-                ...item.specs,
-                brand: item.specs?.brand || (item.title ? item.title.split(' ')[0] : 'Varios'), 
-                model: item.specs?.model || (item.title ? item.title.substring(item.title.indexOf(' ')+1) : ''),
-           }));
+              ...item,
+              ...item.specs,
+              brand: item.specs?.brand || (item.title ? item.title.split(' ')[0] : 'Varios'),
+              model: item.specs?.model || (item.title ? item.title.substring(item.title.indexOf(' ') + 1) : ''),
+            }));
 
           // Get 3 random cars
           const shuffled = otherCars.sort(() => 0.5 - Math.random());
@@ -150,9 +150,8 @@ export default function CarDetail() {
             <div className="bg-gray-100 rounded-xl overflow-hidden shadow-lg mb-6 relative group flex items-center justify-center bg-opacity-20">
               <img
                 src={currentImage}
-                alt={`${car.brand} ${car.model} - Foto ${
-                  currentImageIndex + 1
-                }`}
+                alt={`${car.brand} ${car.model} - Foto ${currentImageIndex + 1
+                  }`}
                 onClick={() => setShowZoom(true)}
                 className="w-full h-auto max-h-[80vh] object-contain mx-auto cursor-zoom-in"
               />
@@ -217,11 +216,10 @@ export default function CarDetail() {
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 h-20 w-20 rounded-lg overflow-hidden border-2 transition ${
-                      index === currentImageIndex
+                    className={`flex-shrink-0 h-20 w-20 rounded-lg overflow-hidden border-2 transition ${index === currentImageIndex
                         ? "border-blue-600"
                         : "border-gray-300 hover:border-gray-400"
-                    }`}
+                      }`}
                   >
                     <img
                       src={image.image_path}
@@ -247,10 +245,14 @@ export default function CarDetail() {
           {/* Panel Precio y CTA */}
           <div>
             <div className="bg-blue-600 text-white p-8 rounded-xl shadow-lg sticky top-20">
-              <p className="text-sm text-blue-100 mb-2">Precio Final</p>
-              <p className="text-4xl font-bold mb-6">
-                {formattedPrice(car.price)}
-              </p>
+              {Number(car.price) > 0 && (
+                <>
+                  <p className="text-sm text-blue-100 mb-2">Precio Final</p>
+                  <p className="text-4xl font-bold mb-6">
+                    {formattedPrice(car.price)}
+                  </p>
+                </>
+              )}
 
               <div className="space-y-3 mb-6">
                 <p className="text-blue-100 text-sm">
@@ -298,73 +300,73 @@ export default function CarDetail() {
             </div>
           </div>
         </div>
-        
+
         {/* Renderizado dinámico de specs */}
         {car.category === 'VEHICULO' && (
-        <div className="bg-gray-50 p-8 rounded-xl mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Ficha Técnica
-          </h2>
+          <div className="bg-gray-50 p-8 rounded-xl mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              Ficha Técnica
+            </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-600 mb-2">MOTOR</h3>
-              <p className="text-lg font-bold text-gray-900">{car.motor || 'N/A'}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-600 mb-2">POTENCIA</h3>
-              <p className="text-lg font-bold text-gray-900">{car.potencia || 'N/A'}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-600 mb-2">TRANSMISIÓN</h3>
-              <p className="text-lg font-bold text-gray-900">{car.transmision || 'N/A'}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">MOTOR</h3>
+                <p className="text-lg font-bold text-gray-900">{car.motor || 'N/A'}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">POTENCIA</h3>
+                <p className="text-lg font-bold text-gray-900">{car.potencia || 'N/A'}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">TRANSMISIÓN</h3>
+                <p className="text-lg font-bold text-gray-900">{car.transmision || 'N/A'}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-600 mb-2">KM</h3>
                 <p className="text-lg font-bold text-gray-900">{car.km || '0'} km</p>
+              </div>
             </div>
           </div>
-        </div>
         )}
 
         {car.category === 'MAQUINARIA' && (
-            <div className="bg-gray-50 p-8 rounded-xl mb-12">
+          <div className="bg-gray-50 p-8 rounded-xl mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Ficha Técnica Maquinaria
+              Ficha Técnica Maquinaria
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="text-sm font-semibold text-gray-600 mb-2">HORAS</h3>
-                    <p className="text-lg font-bold text-gray-900">{car.horas || '0'} hs</p>
-                </div>
-                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="text-sm font-semibold text-gray-600 mb-2">AÑO</h3>
-                    <p className="text-lg font-bold text-gray-900">{car.year || 'N/A'}</p>
-                </div>
-                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="text-sm font-semibold text-gray-600 mb-2">TRACCIÓN</h3>
-                    <p className="text-lg font-bold text-gray-900">{car.traccion || 'N/A'}</p>
-                </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">HORAS</h3>
+                <p className="text-lg font-bold text-gray-900">{car.horas || '0'} hs</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">AÑO</h3>
+                <p className="text-lg font-bold text-gray-900">{car.year || 'N/A'}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">TRACCIÓN</h3>
+                <p className="text-lg font-bold text-gray-900">{car.traccion || 'N/A'}</p>
+              </div>
             </div>
-            </div>
+          </div>
         )}
-        
+
         {car.category === 'HERRAMIENTA' && (
-            <div className="bg-gray-50 p-8 rounded-xl mb-12">
+          <div className="bg-gray-50 p-8 rounded-xl mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Detalles
+              Detalles
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="text-sm font-semibold text-gray-600 mb-2">CONDICIÓN</h3>
-                    <p className="text-lg font-bold text-gray-900">{car.condicion || 'N/A'}</p>
-                </div>
-                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 className="text-sm font-semibold text-gray-600 mb-2">MARCA</h3>
-                    <p className="text-lg font-bold text-gray-900">{car.marca || 'N/A'}</p>
-                </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">CONDICIÓN</h3>
+                <p className="text-lg font-bold text-gray-900">{car.condicion || 'N/A'}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">MARCA</h3>
+                <p className="text-lg font-bold text-gray-900">{car.marca || 'N/A'}</p>
+              </div>
             </div>
-            </div>
+          </div>
         )}
 
         {/* Equipamiento (si existe en specs, aunque es array, aquí asumimos simple para demo) */}
@@ -382,7 +384,7 @@ export default function CarDetail() {
               {relatedCars.map((related) => {
                 const relatedCoverImage = related.images
                   ? related.images.find((img) => img.is_cover)?.image_path ||
-                    related.images[0]?.image_path
+                  related.images[0]?.image_path
                   : related.image_url;
                 return (
                   <div
@@ -404,12 +406,14 @@ export default function CarDetail() {
                         {related.description}
                       </p>
                       <div className="flex justify-between items-end">
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Precio</p>
-                          <p className="text-xl font-bold text-blue-600">
-                            {formattedPrice(related.price)}
-                          </p>
-                        </div>
+                        {Number(related.price) > 0 && (
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">Precio</p>
+                            <p className="text-xl font-bold text-blue-600">
+                              {formattedPrice(related.price)}
+                            </p>
+                          </div>
+                        )}
                         <Link
                           to={`/catalogo/${related.id}`}
                           onClick={() => window.scrollTo(0, 0)}
@@ -441,25 +445,25 @@ export default function CarDetail() {
               src={currentImage}
               alt="Zoom"
               className="max-w-full max-h-[90vh] object-contain"
-              onClick={(e) => e.stopPropagation()} 
+              onClick={(e) => e.stopPropagation()}
             />
-             {/* Navegación en Zoom (Opcional, reutilizando funciones existentes) */}
-             {images.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white p-4 text-5xl hover:text-gray-300 transition"
-                  >
-                    ‹
-                  </button>
-                  <button
-                     onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white p-4 text-5xl hover:text-gray-300 transition"
-                  >
-                    ›
-                  </button>
-                </>
-             )}
+            {/* Navegación en Zoom (Opcional, reutilizando funciones existentes) */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white p-4 text-5xl hover:text-gray-300 transition"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white p-4 text-5xl hover:text-gray-300 transition"
+                >
+                  ›
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>

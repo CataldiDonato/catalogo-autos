@@ -7,7 +7,7 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV
-    ? `${window.location.origin.replace(/:\d+/, ":5000")}`
+    ? `${window.location.origin.replace(/:\d+/, ":3000")}`
     : "");
 
 export const API_ENDPOINTS = {
@@ -24,7 +24,7 @@ export const API_ENDPOINTS = {
 
   // Contacto
   CONTACT: `${API_BASE_URL}/api/contact`,
-  
+
   // Bot Parser
   BOT_PARSE: `${API_BASE_URL}/api/bot/parse`
 };
