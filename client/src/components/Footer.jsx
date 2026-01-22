@@ -43,9 +43,20 @@ export default function Footer() {
             </p>
           </div>
         </div>
-        <div className="border-t border-emerald-900 pt-8 text-center text-emerald-100/50 text-sm">
+        <div className="border-t border-emerald-900 pt-8 text-center text-emerald-100/50 text-sm space-y-2">
           <p>
             &copy; {currentYear} Ariel Piermattei Maquinarias. Todos los derechos reservados.
+          </p>
+          <p>
+            Desarrollado por{" "}
+            <a 
+              href="https://techphite.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-emerald-300 transition-colors"
+            >
+              TechPhite
+            </a>
           </p>
         </div>
       </div>
